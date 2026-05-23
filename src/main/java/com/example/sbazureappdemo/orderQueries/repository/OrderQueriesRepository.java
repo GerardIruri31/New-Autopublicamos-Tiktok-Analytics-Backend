@@ -30,10 +30,12 @@ public class OrderQueriesRepository {
 
             dto.setCodautora(rs.getString("codautora"));
             dto.setCodlibro(rs.getString("codlibro"));
-            dto.setTippublicacion(rs.getString("nTippublicacion"));
+            dto.setNCodlibro(rs.getString("nCodlibro"));
+            dto.setTippublicacion(rs.getString("tippublicacion"));
             dto.setNTippublicacion(rs.getString("nTippublicacion"));
 
             dto.setCodescena(rs.getString("codescena"));
+            dto.setNCodescena(rs.getString("nCodescena"));
             dto.setCodposteador(rs.getString("codposteador"));
             dto.setCodtelefono(rs.getString("codtelefono"));
             dto.setCodcuentatiktok(rs.getString("codcuentatiktok"));
@@ -56,6 +58,8 @@ public class OrderQueriesRepository {
 
             Date fecplanposteo = rs.getDate("fecplanposteo");
             dto.setFecplanposteo(fecplanposteo != null ? fecplanposteo.toLocalDate() : null);
+
+
 
             dto.setCodestadoorden(rs.getString("codestadoorden"));
             dto.setTipregistroorden(rs.getString("tipregistroorden"));

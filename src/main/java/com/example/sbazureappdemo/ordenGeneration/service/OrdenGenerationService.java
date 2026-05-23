@@ -140,6 +140,8 @@ public class OrdenGenerationService {
 
     public OrderGenerationDetailResponseDTO editOrder(NewManualOrderRequestDTO requestDTO, Long codordentrabajo) {
         // proceso de imagenes
+        System.out.println("insertImagesVideo result => " + requestDTO);
+
         imagesVideoDTO dto = ordenGenerationRepository.insertImagesVideo(requestDTO.getTippublicacion(), requestDTO.getCorreo() ,requestDTO.getCodimagenprincipal(), requestDTO.getCodimagendialogo(),requestDTO.getCodimagenscreenshot(),requestDTO.getCodvideo(),requestDTO.getCodescena(), requestDTO.getCodlibro());
         System.out.println("insertImagesVideo result => " + dto);
         if (dto.getCoderror() != null || dto.getDeserror() != null) {

@@ -14,11 +14,14 @@ public class QueryResponse {
 
 
     private String codautora;
+
+
     private String codlibro;
+    private String nCodlibro;
     private String tippublicacion;
     private String nTippublicacion;
     private String codescena;
-
+    private String nCodescena;
     private String codposteador;
     private String codtelefono;
     private String codcuentatiktok;

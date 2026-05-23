@@ -29,6 +29,7 @@ public class OrdenGenerationRepository {
                 COALESCE(nbposteador, 'NoName') || ' ' || COALESCE(apematposteador, 'NoFirstName')) AS nbrposteador
             from m_posteadorasistente
             where flvigente = 'S'
+            order by nbrposteador
         """;
         return jdbc.query(sql, (rs, rowNum) -> {
             PaResponseDTO pa = new PaResponseDTO();
@@ -77,6 +78,7 @@ public class OrdenGenerationRepository {
               AND l.flvigente = 'S'
               AND a.flvigente = 'S'
               AND pt.flvigente = 'S'
+            order by nbrautora
         """;
         return jdbc.query(sql, new Object[]{codtelefono,codposteador}, (rs, rowNum) -> {
             AuthorResponseDTO dto = new AuthorResponseDTO();
@@ -107,6 +109,7 @@ public class OrdenGenerationRepository {
               AND l.flvigente = 'S'
               AND a.flvigente = 'S'
               AND pt.flvigente = 'S'
+            order by nbrautora
         """;
         return jdbc.query(sql, new Object[] {codposteador}, (rs, rowNum) -> {
             AuthorResponseDTO dto = new AuthorResponseDTO();
@@ -136,6 +139,7 @@ public class OrdenGenerationRepository {
                         AND t.tiptelefono IN ('SOP', 'SOP2')
                         AND t.flvigente = 'S'
                 )
+            order by nbrautora
         """;
         return jdbc.query(sql, new Object[] {codtelefono}, (rs, rowNum) -> {
             AuthorResponseDTO dto = new AuthorResponseDTO();

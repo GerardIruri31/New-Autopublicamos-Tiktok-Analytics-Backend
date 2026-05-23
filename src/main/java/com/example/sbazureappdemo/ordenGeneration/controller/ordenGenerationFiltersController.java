@@ -72,5 +72,7 @@ public class ordenGenerationFiltersController {
         logger.info("Iniciando validación tipos imagen-videos por tippublicacion ... ");
         return ResponseEntity.ok(ordenGenerationService.requiredImagesPerTipPublicacion());
     }
+
+
 }
 

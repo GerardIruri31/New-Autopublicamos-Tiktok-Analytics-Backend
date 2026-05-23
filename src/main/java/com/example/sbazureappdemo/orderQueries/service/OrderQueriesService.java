@@ -3,6 +3,7 @@ package com.example.sbazureappdemo.orderQueries.service;
 
 import com.example.sbazureappdemo.dbQueries.repository.DbQueryRepository;
 import com.example.sbazureappdemo.dbQueries.service.DbQueryService;
+import com.example.sbazureappdemo.exceptions.ResourceNotFoundException;
 import com.example.sbazureappdemo.ordenGeneration.dto.PaResponseDTO;
 import com.example.sbazureappdemo.orderQueries.dto.CreatedByDTO;
 import com.example.sbazureappdemo.orderQueries.dto.FiltersRequest;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ import java.util.List;
 public class OrderQueriesService {
     Logger logger = LoggerFactory.getLogger(OrderQueriesService.class);
     private final OrderQueriesRepository orderQueriesRepository;
+    private final OrderExcelQueries orderExcelQueries;
 
 
     public List<QueryResponse> search(FiltersRequest request) {
@@ -39,11 +42,13 @@ public class OrderQueriesService {
                     ELSE ''
                 END                                                         AS codautora,
 
-                l.deslibro                                                  AS codlibro,
+                h.codlibro                                                  AS codlibro,
+                l.deslibro                                                  AS nCodlibro,
                 e.tippublicacion AS tippublicacion,
                 tp.despost AS nTippublicacion,
 
-                e.desscena                                                  AS codescena,
+                h.codescena                                                 AS codescena,
+                e.desscena                                                  AS nCodescena,
                 
                 COALESCE(p.nbposteador, '') ||
                 CASE
@@ -138,11 +143,19 @@ public class OrderQueriesService {
         addBetweenDates(sql, params, "h.fecreacionregistro", request.getFecreacionregistroinicio(), request.getFecreacionregistrofin());
 
         sql.append(" ORDER BY h.codordentrabajo DESC ");
+        System.out.println(sql);
         return orderQueriesRepository.search(sql, params);
     }
 
     public List<CreatedByDTO> createdBy() {
         return orderQueriesRepository.createdBy();
+    }
+
+
+    public byte[] downloadExcel(FiltersRequest request) {
+        List<QueryResponse> data = search(request);
+        if (data.isEmpty()) throw new ResourceNotFoundException("Lista de órdenes a importar está vacía");
+        return orderExcelQueries.downloadExcel(data);
     }
 
 
@@ -161,22 +174,27 @@ public class OrderQueriesService {
         }
     }
 
-    private void addBetweenDates(StringBuilder sql, List<Object> params, String column, java.util.Date fechaInicio, java.util.Date fechaFin) {
-        if (fechaInicio != null && fechaFin != null) {
+    private void addBetweenDates(
+            StringBuilder sql,
+            List<Object> params,
+            String column,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        if (startDate != null && endDate != null) {
             sql.append(" AND ").append(column).append(" BETWEEN ? AND ? ");
-            params.add(new Date(fechaInicio.getTime()));
-            params.add(new Date(fechaFin.getTime()));
-            return;
-        }
-
-        if (fechaInicio != null) {
+            params.add(startDate);
+            params.add(endDate);
+        } else if (startDate != null) {
             sql.append(" AND ").append(column).append(" >= ? ");
-            params.add(new Date(fechaInicio.getTime()));
-        }
-
-        if (fechaFin != null) {
+            params.add(startDate);
+        } else if (endDate != null) {
             sql.append(" AND ").append(column).append(" <= ? ");
-            params.add(new Date(fechaFin.getTime()));
+            params.add(endDate);
         }
     }
+
+
+
+
 }

@@ -4,8 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.Date;
-
+import java.time.LocalDate;
 @Data
 public class FiltersRequest {
     private String correo;
@@ -20,10 +19,10 @@ public class FiltersRequest {
     private Integer codestadoorden;
     private String flgordencompleta;
     private String tipregistroorden;
-    private Date fecplanposteoinicio;
-    private Date fecplanposteofin;
-    private Date fecreacionregistroinicio;
-    private Date fecreacionregistrofin;
+    private LocalDate fecplanposteoinicio;
+    private LocalDate fecplanposteofin;
+    private LocalDate fecreacionregistroinicio;
+    private LocalDate fecreacionregistrofin;
 
 
 }
