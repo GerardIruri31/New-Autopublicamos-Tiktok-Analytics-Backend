@@ -29,7 +29,9 @@ public class UploadTempTableService {
         String finalTableName = tableName + "_" + uuid;
         String shortId = uuid.substring(0, 10);
 
-        String pkName = "pk_" + finalTableName;
+
+        String pkName = tableName.equals("m_librotelefonocuenta") ? null : "pk_" + finalTableName;
+
 
         List<List<String>> fkContent = selectFks(tableName, shortId);
         List<String> fks = fkContent.get(0);
@@ -40,11 +42,15 @@ public class UploadTempTableService {
         try {
             Integer inserted = dataMaintenanceRepository.uploadConnection(tableName ,response, finalTableName, pkName, fkSql, userId);
             if (inserted == 0) throw new IllegalArgumentException("No records to process");
+
             Map<String, Object> result = dataMaintenanceRepository.ejecutarProcesoStaging(tableName, finalTableName, userId);
             //return Map.of("message", "OK","nuevasUrls", result.get("nuevas_urls"),"existentesUrls", result.get("existentes_urls"),"insertadosEscena", result.get("insertados_escena"));
             return Map.of("message", ((List<?>) response.get("records")).size());
+        } catch (IllegalArgumentException e) {
+            logger.error("Error controlado en uploadStaging. table={}, staging={}", tableName, finalTableName, e);
+            throw e;
         } catch (Exception e) {
-            logger.error("Error en uploadStaging. table={}, staging={}", tableName, finalTableName, e);
+            logger.error("Error técnico en uploadStaging. table={}, staging={}", tableName, finalTableName, e);
             throw new RuntimeException("Error en uploadStaging. table=" + tableName + ", staging=" + finalTableName, e);
         } finally {
             stagingCleanupService.dropTable(finalTableName);
@@ -92,6 +98,14 @@ public class UploadTempTableService {
                 fk.add("fk_" + tableName + "_" + shortId + "_p");
                 columns.add("tippublicacion");
                 refs.add("public.m_tipopost(tippublicacion)");
+                break;
+            case "m_librotelefonocuenta":
+                fk.add("fk_" + tableName + "_" + shortId + "c");
+                columns.add("codlibro");
+                refs.add("public.m_libro(codlibro)");
+                fk.add("fk_" + tableName + "_" + shortId + "t");
+                columns.add("codtelefono");
+                refs.add("public.m_telefono(codtelefono)");
                 break;
             default:
                 break;

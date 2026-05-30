@@ -55,6 +55,14 @@ public class DataMaintenanceRepository {
                         ps.setObject(7, r.get("flvigente"));
                         ps.setObject(8, userId);
                         break;
+                    case "m_librotelefonocuenta":
+                        ps.setObject(1, r.get("id"));
+                        ps.setObject(2, r.get("codlibro"));
+                        ps.setObject(3, r.get("codtelefono"));
+                        ps.setObject(4, r.get("codcuenta"));
+                        ps.setObject(5, r.get("flvigente"));
+                        ps.setObject(6, userId);
+                        break;
                     default:
                         throw new IllegalArgumentException("Tabla no soportada en batch setter: " + tableName);
                 }
@@ -77,10 +85,19 @@ public class DataMaintenanceRepository {
             case "m_librotipopostimagenvideo":
                 sql = "SELECT * FROM public.fn_procesar_librotipopostimagenvideo_staging(?, ?)";
                 break;
+            case "m_librotelefonocuenta":
+                sql = "SELECT * FROM public.fn_procesar_librotelefonocuenta(?,?)";
+                break;
             default:
                 throw new IllegalArgumentException("Tabla no soportada para proceso staging: " + tableName);
         }
-        return jdbc.queryForMap(sql, finalTableName, userId);
+        Map<String, Object> result = jdbc.queryForMap(sql, finalTableName, userId);
+        Object codError = result.get("o_coderror");
+        Object msjError = result.get("o_msjerror");
+        if (codError != null && !codError.toString().isBlank()) {
+            throw new IllegalArgumentException(msjError != null ? msjError.toString() : codError.toString());
+        }
+        return result;
     }
 
     private String switchCreateTable(String tableName, String finalTableName, String pkName, String fkSql) {
@@ -124,6 +141,22 @@ public class DataMaintenanceRepository {
             );
             """, finalTableName, pkName, fkSql);
                 break;
+            case "m_librotelefonocuenta":
+                ddl = String.format("""
+            CREATE TABLE %s (
+              id bigint,
+              codlibro varchar NOT NULL,
+              codtelefono varchar NOT NULL,
+              codcuenta varchar NOT NULL,
+              flvigente char(1) NOT NULL,
+              codusuarioauditoria varchar,
+              fecreacionregistro date,
+              horacreacionregistro time,
+              fecactualizacionregistro date,
+              horaactualizacionregistro time
+              %s
+            );""", finalTableName,fkSql);
+                break;
             default:
                 throw new IllegalArgumentException("Tabla no soportada para staging: " + tableName);
         }
@@ -165,6 +198,18 @@ public class DataMaintenanceRepository {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME)
             ON CONFLICT (codlibro, tippublicacion, tipimagenvideo,urlimagenvideo)
             DO NOTHING;
+            """, finalTableName);
+                break;
+            case "m_librotelefonocuenta" :
+                insertSql = String.format("""
+            INSERT INTO %s (
+              id,codlibro, codtelefono, codcuenta, flvigente,
+              codusuarioauditoria,
+              fecreacionregistro, horacreacionregistro,
+              fecactualizacionregistro, horaactualizacionregistro
+            )
+            VALUES (?,?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME);
+            
             """, finalTableName);
                 break;
             default:

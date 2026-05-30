@@ -42,13 +42,29 @@ public class OrdenGenerationRepository {
 
     public List<TelephoneResponseDTO> selectTelephone(String PaCode) {
         String sql = """
-            SELECT codtelefono, 'NOR' AS tiptelefono\s
-            from m_posteadortelefono
-            where codposteador = ? AND flvigente = 'S'
-            UNION
-            SELECT codtelefono, tiptelefono from m_telefono
-            where tiptelefono IN ('SOP','SOP2')
-            AND flvigente = 'S'
+            SELECT codtelefono, tiptelefono
+            FROM (
+                SELECT codtelefono, 'NOR' AS tiptelefono
+                FROM m_posteadortelefono
+                WHERE codposteador = ? 
+                  AND flvigente = 'S'
+    
+                UNION
+    
+                SELECT codtelefono, tiptelefono
+                FROM m_telefono
+                WHERE tiptelefono IN ('SOP','SOP2')
+                  AND flvigente = 'S'
+            ) x
+            ORDER BY
+                    CASE tiptelefono
+                        WHEN 'NOR' THEN 1
+                        WHEN 'SOP' THEN 2
+                        WHEN 'SOP2' THEN 3
+                        ELSE 4
+                    END,
+                    CAST(NULLIF(regexp_replace(codtelefono, '[^0-9]', '', 'g'), '') AS integer),
+                    codtelefono
         """;
         return jdbc.query(sql, new Object[]{PaCode},(rs,rowNum) -> {
             TelephoneResponseDTO telephone = new TelephoneResponseDTO();

@@ -287,7 +287,7 @@ public class ExcelUploadService {
                         LocalDate fechaParseada = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                         record.put(header, fechaParseada);
                     }
-                    else if ("numpostemeta".equalsIgnoreCase(header) || "numposteometa".equalsIgnoreCase(header) || "numversion".equalsIgnoreCase(header) || "codvibe".equalsIgnoreCase(header) || "codgenero".equalsIgnoreCase(header) || "codestadoescena".equalsIgnoreCase(header) || "numslide".equalsIgnoreCase(header) || "codtexto".equalsIgnoreCase(header) || "codsonido".equalsIgnoreCase(header) || "codestadosonido".equalsIgnoreCase(header) || "codtipocuenta".equalsIgnoreCase(header) || "codestadocuenta".equalsIgnoreCase(header)  || "tipimagenvideo".equalsIgnoreCase(header) || "tipnivelasignacion".equalsIgnoreCase(header) || "codhashtag".equalsIgnoreCase(header) || "codparametro".equalsIgnoreCase(header) || "numvalorparametro".equalsIgnoreCase(header) || "codimagenvideo".equalsIgnoreCase(header)) {
+                    else if ("numpostemeta".equalsIgnoreCase(header) || "numposteometa".equalsIgnoreCase(header) || "numversion".equalsIgnoreCase(header) || "codvibe".equalsIgnoreCase(header) || "codgenero".equalsIgnoreCase(header) || "codestadoescena".equalsIgnoreCase(header) || "numslide".equalsIgnoreCase(header) || "codtexto".equalsIgnoreCase(header) || "codsonido".equalsIgnoreCase(header) || "codestadosonido".equalsIgnoreCase(header) || "codtipocuenta".equalsIgnoreCase(header) || "codestadocuenta".equalsIgnoreCase(header)  || "tipimagenvideo".equalsIgnoreCase(header) || "tipnivelasignacion".equalsIgnoreCase(header) || "codhashtag".equalsIgnoreCase(header) || "codparametro".equalsIgnoreCase(header) || "numvalorparametro".equalsIgnoreCase(header) || "codimagenvideo".equalsIgnoreCase(header) || "id".equalsIgnoreCase(header)) {
                         if (cell.getCellType() == CellType.NUMERIC) {
                             record.put(header, (int) cell.getNumericCellValue());
                         } else if (cell.getCellType() == CellType.STRING) {
@@ -342,11 +342,9 @@ public class ExcelUploadService {
             response.put("processedRecords", records.size());
 
 
-            logger.info(tableName);
-            logger.info("Records: " + records);
             if (tableName.isEmpty()) {
                 throw new IllegalArgumentException("Error: No se detectó una tabla válida.");
-            } else if (tableName.equalsIgnoreCase("m_escenaimagenvideo") || tableName.equalsIgnoreCase("m_librotipopostimagenvideo")) {
+            } else if (tableName.equalsIgnoreCase("m_escenaimagenvideo") || tableName.equalsIgnoreCase("m_librotipopostimagenvideo") || tableName.equalsIgnoreCase("m_librotelefonocuenta")) {
                 return uploadTempTableService.uploadStaging(response,userId);
             }
             else {
