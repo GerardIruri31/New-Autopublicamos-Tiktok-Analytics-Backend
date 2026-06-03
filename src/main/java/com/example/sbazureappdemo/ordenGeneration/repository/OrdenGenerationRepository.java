@@ -422,6 +422,7 @@ public class OrdenGenerationRepository {
                 when 2 then 'Flagged'
                 when 3 then '-100 views'
                 when 4 then 'Posted'
+                when 5 then 'Drafted'
             END AS codestadoorden,
             h.tipregistroorden,
             h.flgordencompleta,
@@ -543,4 +544,19 @@ public class OrdenGenerationRepository {
         return value != null ? value.longValue() : null;
     }
 
+
+    public DeleteOrderResponseDTO deleteOrder(DeleteRequestDTO requestDTO) {
+        String sql = "SELECT * FROM public.fn_liberar_recursos_ordentrabajo(?,?,?,?,?,?,?,?,?,?,?,?)";
+        return jdbc.queryForObject(sql, (rs, rowNum) -> {
+            DeleteOrderResponseDTO dto = new DeleteOrderResponseDTO();
+            dto.setCtdordenesupdated(getIntegerNullable(rs, "o_ctdordenesupdated"));
+            dto.setCtdimagenesupdate(getIntegerNullable(rs, "o_ctdimagenesupdate"));
+            dto.setCtdcuentasupdate(getIntegerNullable(rs, "o_ctdcuentasupdate"));
+            dto.setCtdsonidosdelete(getIntegerNullable(rs, "o_ctdsonidosdelete"));
+            dto.setO_ctdlibrosdelete(getIntegerNullable(rs, "o_ctdlibrosdelete"));
+            dto.setCoderror(rs.getString("o_coderror"));
+            dto.setDeserror(rs.getString("o_deserror"));
+            return dto;
+        }, requestDTO.getCorreo(), requestDTO.getCodordentrabajo(), requestDTO.getCodescena(), requestDTO.getTippublicacion(), requestDTO.getCodlibro(), requestDTO.getCodcuentatiktok(), requestDTO.getCodimagenprincipal(),  requestDTO.getCodimagenscreenshot(),  requestDTO.getCodvideo());
+    }
 }

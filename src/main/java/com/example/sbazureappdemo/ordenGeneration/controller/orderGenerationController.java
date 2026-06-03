@@ -45,7 +45,11 @@ public class orderGenerationController {
         return ResponseEntity.ok(ordenGenerationService.manualOrder(requestDTO));
     }
 
-
-
-
+    @PreAuthorize("hasAnyRole('SUP','ADMIN')")
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteOrder(@Valid @RequestBody DeleteRequestDTO requestDTO) {
+        logger.info("Iniciando delete orden - restaurando rotaciones de contenido ... ");
+        ordenGenerationService.deleteOrder(requestDTO);
+        return ResponseEntity.ok().build();
+    }
 }

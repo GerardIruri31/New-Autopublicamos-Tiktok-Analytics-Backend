@@ -81,6 +81,7 @@ public class OrderQueriesService {
                     WHEN 2 THEN 'Flagged'
                     WHEN 3 THEN '-100 Views'
                     WHEN 4 THEN 'Posted'
+                    WHEN 5 THEN 'Drafted'
                     ELSE NULL
                 END                                                         AS codestadoorden,
 

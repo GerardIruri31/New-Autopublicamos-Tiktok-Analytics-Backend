@@ -66,7 +66,7 @@ public class SecurityConfig {
                                 "/apifycall/excel/read-tiktok-accounts",
                                 "/databasequery/filter"
                         ).hasRole("ADMIN")
-                        .requestMatchers("/orden/filter/**","/order/queries/**","/order/auto","/order/edit","order/manual").hasAnyRole("SUP", "ADMIN","PA")
+                        .requestMatchers("/orden/filter/**","/order/queries/**","/order/auto","/order/edit","order/manual","order/delete").hasAnyRole("SUP", "ADMIN","PA")
                         .anyRequest().hasAnyRole("PA", "SUP", "ADMIN","AUT")
                 )
                 .oauth2ResourceServer(oauth -> oauth

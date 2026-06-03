@@ -335,4 +335,10 @@ public class OrdenGenerationService {
     }
 
 
+    public void deleteOrder(DeleteRequestDTO requestDTO) {
+        DeleteOrderResponseDTO dto = ordenGenerationRepository.deleteOrder(requestDTO);
+        if (dto.getCoderror() != null || dto.getDeserror() != null) {
+            throw new DataRetrievalFailureException("Error al liberar recursos de la orden: " + requestDTO.getCodordentrabajo() + " | coderror: " + dto.getCoderror() + " | deserror: " + dto.getDeserror());
+        }
+    }
 }
