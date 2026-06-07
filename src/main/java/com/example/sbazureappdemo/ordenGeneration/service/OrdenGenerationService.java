@@ -140,10 +140,10 @@ public class OrdenGenerationService {
 
     public OrderGenerationDetailResponseDTO editOrder(NewManualOrderRequestDTO requestDTO, Long codordentrabajo) {
         // proceso de imagenes
-        System.out.println("insertImagesVideo result => " + requestDTO);
+        //System.out.println("insertImagesVideo result => " + requestDTO);
 
         imagesVideoDTO dto = ordenGenerationRepository.insertImagesVideo(requestDTO.getTippublicacion(), requestDTO.getCorreo() ,requestDTO.getCodimagenprincipal(), requestDTO.getCodimagendialogo(),requestDTO.getCodimagenscreenshot(),requestDTO.getCodvideo(),requestDTO.getCodescena(), requestDTO.getCodlibro());
-        System.out.println("insertImagesVideo result => " + dto);
+        //System.out.println("insertImagesVideo result => " + dto);
         if (dto.getCoderror() != null || dto.getDeserror() != null) {
             throw new DataRetrievalFailureException("Error al insertar imagenes-videos en orden: " + codordentrabajo + " | coderror: " + dto.getCoderror() + " | deserror: " + dto.getDeserror());
         }
@@ -269,16 +269,16 @@ public class OrdenGenerationService {
                 request.getFecfinplanposteo(),
                 request.getCtdordenesmetamanual()
         );
-
         AutoGenerationResponseDTO dto = ordenGenerationRepository.autoGeneration(request);
 
-        logger.info("Respuesta SP autoGeneration: codcabeceraordentrabajo={}, ctdordenes={}, ctdordenescompleta={}, ctdordenesincompleta={}, msj_error_log={}",
+        /*logger.info("Respuesta SP autoGeneration: codcabeceraordentrabajo={}, ctdordenes={}, ctdordenescompleta={}, ctdordenesincompleta={}, msj_error_log={}",
                 dto != null ? dto.getCodcabeceraordentrabajo() : null,
                 dto != null ? dto.getCtdordenes() : null,
                 dto != null ? dto.getCtdordenescompleta() : null,
                 dto != null ? dto.getCtdordenesincompleta() : null,
                 dto != null ? dto.getMsj_error_log() : null
         );
+        */
 
         if (dto == null) {
             throw new IllegalStateException("El procedimiento sp_orquestar_generacion_ordenes_automaticas no devolvió respuesta.");
@@ -288,14 +288,15 @@ public class OrdenGenerationService {
         }
 
         List<OrderGenerationDetailResponseDTO> ordenes = ordenGenerationRepository.selectAutoGeneration(dto.getCodcabeceraordentrabajo(),null);
-        logger.info("Resultado selectAutoGeneration para codcabeceraordentrabajo={}: total ordenes={}",
+        /*logger.info("Resultado selectAutoGeneration para codcabeceraordentrabajo={}: total ordenes={}",
                 dto.getCodcabeceraordentrabajo(),
                 ordenes != null ? ordenes.size() : null
         );
+        */
 
         if (ordenes != null && !ordenes.isEmpty()) {
             OrderGenerationDetailResponseDTO primera = ordenes.get(0);
-            logger.info("Primera orden encontrada: codordentrabajo={}, codcabeceraordentrabajo={}, codautora={}, codlibro={}, codescena={}, codposteador={}, codtelefono={}, fecplanposteo={}",
+            /*logger.info("Primera orden encontrada: codordentrabajo={}, codcabeceraordentrabajo={}, codautora={}, codlibro={}, codescena={}, codposteador={}, codtelefono={}, fecplanposteo={}",
                     primera.getCodordentrabajo(),
                     primera.getCodcabeceraordentrabajo(),
                     primera.getCodautora(),
@@ -305,6 +306,7 @@ public class OrdenGenerationService {
                     primera.getCodtelefono(),
                     primera.getFecplanposteo()
             );
+            */
         } else {
             logger.warn("selectAutoGeneration devolvió lista vacía para codcabeceraordentrabajo={}", dto.getCodcabeceraordentrabajo());
         }
@@ -318,7 +320,7 @@ public class OrdenGenerationService {
                 ordenes
         );
 
-        logger.info("Respuesta final al frontend: codcabeceraordentrabajo={}, ctdordenes={}, ctdordenescompleta={}, ctdordenesincompleta={}, msj_error_log={}, totalOrdenesEnLista={}",
+        /*logger.info("Respuesta final al frontend: codcabeceraordentrabajo={}, ctdordenes={}, ctdordenescompleta={}, ctdordenesincompleta={}, msj_error_log={}, totalOrdenesEnLista={}",
                 result.getCodcabeceraordentrabajo(),
                 result.getCtdordenes(),
                 result.getCtdordenescompleta(),
@@ -326,6 +328,7 @@ public class OrdenGenerationService {
                 result.getMsj_error_log(),
                 result.getOrdenes() != null ? result.getOrdenes().size() : null
         );
+         */
         return result;
     }
 

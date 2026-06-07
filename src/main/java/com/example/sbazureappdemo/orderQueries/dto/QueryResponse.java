@@ -26,6 +26,7 @@ public class QueryResponse {
     private String codtelefono;
     private String codcuentatiktok;
     private String codsonido;
+    private Integer nCodsonido;
 
     private String desscenahook;
     private String descaption;
@@ -36,9 +37,14 @@ public class QueryResponse {
     private String despalote;
 
     private String codimagenprincipal;
+    private Integer nCodimagenprincipal;
     private String codimagenscreenshot;
+    private Integer nCodimagenscreenshot;
     private String codimagendialogo;
+    private Integer nCodimagendialogo;
     private String codvideo;
+    private Integer nCodvideo;
+
 
     private String desinstrucciones;
 

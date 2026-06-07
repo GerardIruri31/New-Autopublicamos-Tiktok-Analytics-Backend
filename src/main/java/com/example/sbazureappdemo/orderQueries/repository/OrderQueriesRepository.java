@@ -40,6 +40,8 @@ public class OrderQueriesRepository {
             dto.setCodtelefono(rs.getString("codtelefono"));
             dto.setCodcuentatiktok(rs.getString("codcuentatiktok"));
             dto.setCodsonido(rs.getString("codsonido"));
+            int nCodsonido = rs.getInt("nCodsonido");
+            dto.setNCodsonido(rs.wasNull() ? null : nCodsonido);
 
             dto.setDesscenahook(rs.getString("desscenahook"));
             dto.setDescaption(rs.getString("descaption"));
@@ -50,9 +52,21 @@ public class OrderQueriesRepository {
             dto.setDespalote(rs.getString("despalote"));
 
             dto.setCodimagenprincipal(rs.getString("codimagenprincipal"));
+            int nCodimagenprincipal = rs.getInt("nCodimagenprincipal");
+            dto.setNCodimagenprincipal(rs.wasNull() ? null : nCodimagenprincipal);
+
             dto.setCodimagenscreenshot(rs.getString("codimagenscreenshot"));
+            int nCodimagenscreenshot = rs.getInt("nCodimagenscreenshot");
+            dto.setNCodimagenscreenshot(rs.wasNull() ? null : nCodimagenscreenshot);
+
             dto.setCodimagendialogo(rs.getString("codimagendialogo"));
+            int nCodimagendialogo = rs.getInt("nCodimagendialogo");
+            dto.setNCodimagendialogo(rs.wasNull() ? null : nCodimagendialogo);
+
             dto.setCodvideo(rs.getString("codvideo"));
+            int nCodvideo = rs.getInt("nCodvideo");
+            dto.setNCodvideo(rs.wasNull() ? null : nCodvideo);
+
 
             dto.setDesinstrucciones(rs.getString("desinstrucciones"));
 
@@ -85,7 +99,7 @@ public class OrderQueriesRepository {
 
             Time horaactualizacionregistro = rs.getTime("horaactualizacionregistro");
             dto.setHoraactualizacionregistro(horaactualizacionregistro != null ? horaactualizacionregistro.toLocalTime() : null);
-
+            System.out.println(dto);
             return dto;
         });
     }

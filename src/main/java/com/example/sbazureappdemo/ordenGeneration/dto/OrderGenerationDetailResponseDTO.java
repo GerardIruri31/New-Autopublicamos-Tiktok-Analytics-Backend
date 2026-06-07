@@ -41,7 +41,7 @@ public class OrderGenerationDetailResponseDTO {
     private String codtelefono;
     private String codcuentatiktok;
 
-    private String codsonido;
+    private Integer codsonido;
 
     @JsonProperty("nCodsonido")
     private String nCodsonido;

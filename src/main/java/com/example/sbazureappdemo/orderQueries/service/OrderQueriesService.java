@@ -58,7 +58,9 @@ public class OrderQueriesService {
 
                 h.codtelefono                                               AS codtelefono,
                 h.codcuentatiktok                                           AS codcuentatiktok,
+                
                 s.urlsonido                                                 AS codsonido,
+                s.codsonido                                                 AS nCodsonido,
 
                 h.desscenahook                                              AS desscenahook,
                 COALESCE(e.descaption, h.descaption)                        AS descaption,
@@ -69,9 +71,13 @@ public class OrderQueriesService {
                 h.despalote                                                 AS despalote,
 
                 imgp.urlimagenvideo                                         AS codimagenprincipal,
+                imgp.codimagenvideo                                         AS nCodimagenprincipal,
                 imgs.urlimagenvideo                                         AS codimagenscreenshot,
+                imgs.codimagenvideo                                         AS nCodimagenscreenshot,
                 imgd.urlimagenvideo                                         AS codimagendialogo,
+                imgd.codimagenvideo                                         AS nCodimagendialogo,
                 imgv.urlimagenvideo                                         AS codvideo,
+                imgv.codimagenvideo                                         AS nCodvideo,
 
                 h.desinstrucciones                                          AS desinstrucciones,
                 h.fecplanposteo                                             AS fecplanposteo,
@@ -82,6 +88,7 @@ public class OrderQueriesService {
                     WHEN 3 THEN '-100 Views'
                     WHEN 4 THEN 'Posted'
                     WHEN 5 THEN 'Drafted'
+                    WHEN 6 THEN 'Deleted'
                     ELSE NULL
                 END                                                         AS codestadoorden,
 
@@ -133,6 +140,7 @@ public class OrderQueriesService {
         addStringCondition(sql, params, "h.codautora", request.getCodautora());
         addStringCondition(sql, params, "h.codlibro", request.getCodlibro());
         addStringCondition(sql, params, "h.codescena", request.getCodescena());
+        addStringCondition(sql, params, "e.tippublicacion", request.getTippublicacion());
         addIntegerCondition(sql, params, "h.codsonido", request.getCodsonido());
         addStringCondition(sql, params, "h.codcuentatiktok", request.getCodcuentatiktok());
         addStringCondition(sql, params, "h.codusuarioauditoriacreareg", request.getCodusuarioauditoriacreareg());
@@ -145,7 +153,9 @@ public class OrderQueriesService {
 
         sql.append(" ORDER BY h.codordentrabajo DESC ");
         System.out.println(sql);
-        return orderQueriesRepository.search(sql, params);
+        List<QueryResponse> dto = orderQueriesRepository.search(sql, params);
+        System.out.println(dto);
+        return dto;
     }
 
     public List<CreatedByDTO> createdBy() {

@@ -225,7 +225,7 @@ public class OrdenGenerationRepository {
                 String.join(", ", columnas) +
                 ") VALUES (" +
                 String.join(", ", placeholders) +
-                ")";
+                ") RETURNING codordentrabajo";
         return jdbc.queryForObject(sql, Long.class, valores.toArray());
     }
 
@@ -368,11 +368,12 @@ public class OrdenGenerationRepository {
                 String msj_error_logValue = cs.getString(19);
                 String msj_error_log = cs.wasNull() ? null : msj_error_logValue;
 
-                logger.info("codcabecera: {}", codCabecera);
+                /*logger.info("codcabecera: {}", codCabecera);
                 logger.info("ctdOrdenes: {}", ctdOrdenes);
                 logger.info("ctdOrdenesCompleta: {}", ctdOrdenesCompleta);
                 logger.info("ctdOrdenesIncompleta: {}", ctdOrdenesIncompleta);
                 logger.info("msj_error_log: {}", msj_error_log);
+                */
 
                 return new AutoGenerationResponseDTO(codCabecera, ctdOrdenes, ctdOrdenesCompleta, ctdOrdenesIncompleta,msj_error_log);
             }
@@ -423,6 +424,7 @@ public class OrdenGenerationRepository {
                 when 3 then '-100 views'
                 when 4 then 'Posted'
                 when 5 then 'Drafted'
+                when 6 then 'Deleted'
             END AS codestadoorden,
             h.tipregistroorden,
             h.flgordencompleta,
@@ -494,7 +496,9 @@ public class OrdenGenerationRepository {
             dto.setCodtelefono(rs.getString("codtelefono"));
             dto.setCodcuentatiktok(rs.getString("codcuentatiktok"));
 
-            dto.setCodsonido(rs.getString("codsonido"));
+            int codsonido = rs.getInt("codsonido");
+            dto.setCodsonido(rs.wasNull() ? null : codsonido);
+
             dto.setNCodsonido(rs.getString("n_codsonido"));
 
             dto.setDesscenahook(rs.getString("desscenahook"));
@@ -557,6 +561,6 @@ public class OrdenGenerationRepository {
             dto.setCoderror(rs.getString("o_coderror"));
             dto.setDeserror(rs.getString("o_deserror"));
             return dto;
-        }, requestDTO.getCorreo(), requestDTO.getCodordentrabajo(), requestDTO.getCodescena(), requestDTO.getTippublicacion(), requestDTO.getCodlibro(), requestDTO.getCodcuentatiktok(), requestDTO.getCodimagenprincipal(),  requestDTO.getCodimagenscreenshot(),  requestDTO.getCodvideo());
+        }, requestDTO.getCorreo(), requestDTO.getCodordentrabajo(), requestDTO.getCodescena(), requestDTO.getTippublicacion(), requestDTO.getCodlibro(), requestDTO.getCodcuentatiktok(), requestDTO.getCodtelefono() ,requestDTO.getCodimagenprincipal(),  requestDTO.getCodimagenscreenshot(),  requestDTO.getCodimagendialogo(), requestDTO.getCodvideo(), requestDTO.getCodsonido());
     }
 }

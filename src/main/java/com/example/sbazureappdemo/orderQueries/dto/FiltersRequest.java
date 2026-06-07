@@ -13,6 +13,7 @@ public class FiltersRequest {
     private String codautora;
     private String codlibro;
     private String codescena;
+    private String tippublicacion;
     private Integer codsonido;
     private String codcuentatiktok;
     private String codusuarioauditoriacreareg;
