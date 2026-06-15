@@ -56,12 +56,11 @@ public class DataMaintenanceRepository {
                         ps.setObject(8, userId);
                         break;
                     case "m_librotelefonocuenta":
-                        ps.setObject(1, r.get("id"));
-                        ps.setObject(2, r.get("codlibro"));
-                        ps.setObject(3, r.get("codtelefono"));
-                        ps.setObject(4, r.get("codcuenta"));
-                        ps.setObject(5, r.get("flvigente"));
-                        ps.setObject(6, userId);
+                        ps.setObject(1, r.get("codlibro"));
+                        ps.setObject(2, r.get("codtelefono"));
+                        ps.setObject(3, r.get("codcuenta"));
+                        ps.setObject(4, r.get("flvigente"));
+                        ps.setObject(5, userId);
                         break;
                     default:
                         throw new IllegalArgumentException("Tabla no soportada en batch setter: " + tableName);
@@ -144,7 +143,6 @@ public class DataMaintenanceRepository {
             case "m_librotelefonocuenta":
                 ddl = String.format("""
             CREATE TABLE %s (
-              id bigint,
               codlibro varchar NOT NULL,
               codtelefono varchar NOT NULL,
               codcuenta varchar NOT NULL,
@@ -203,12 +201,12 @@ public class DataMaintenanceRepository {
             case "m_librotelefonocuenta" :
                 insertSql = String.format("""
             INSERT INTO %s (
-              id,codlibro, codtelefono, codcuenta, flvigente,
+              codlibro, codtelefono, codcuenta, flvigente,
               codusuarioauditoria,
               fecreacionregistro, horacreacionregistro,
               fecactualizacionregistro, horaactualizacionregistro
             )
-            VALUES (?,?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME);
+            VALUES (?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME);
             
             """, finalTableName);
                 break;

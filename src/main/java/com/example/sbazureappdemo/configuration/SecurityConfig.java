@@ -59,14 +59,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/apifycall/filtrar",
                                 "/apifycall/excel/download",
-                                "/datamaintenance/uploadexcel",
-                                "/datamaintenance/tablerecords",
-                                "/datamaintenance/download",
-                                "/pagraphs/getdata",
-                                "/apifycall/excel/read-tiktok-accounts",
-                                "/databasequery/filter"
+                                "/apifycall/excel/read-tiktok-accounts"
                         ).hasRole("ADMIN")
-                        .requestMatchers("/orden/filter/**","/order/queries/**","/order/auto","/order/edit","order/manual","order/delete").hasAnyRole("SUP", "ADMIN","PA")
+                        .requestMatchers("/orden/filter/**","/order/queries/**","/order/auto","/order/edit","/order/manual","/order/delete","/databasequery/filter","/pagraphs/getdata","/datamaintenance/uploadexcel","/datamaintenance/tablerecords","/datamaintenance/download").hasAnyRole("SUP", "ADMIN","PA")
                         .anyRequest().hasAnyRole("PA", "SUP", "ADMIN","AUT")
                 )
                 .oauth2ResourceServer(oauth -> oauth
