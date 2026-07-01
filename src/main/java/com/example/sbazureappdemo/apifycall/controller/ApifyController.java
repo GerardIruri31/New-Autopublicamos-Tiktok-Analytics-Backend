@@ -27,7 +27,7 @@ public class ApifyController {
     private final ExcelColumnReaderService excelColumnReaderService;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUP','PA')")
     @PostMapping("/filtrar")
     public ResponseEntity<List<Map<String, Object>>> filtrarDatos(@RequestBody ApifyRequestParamsDTO request) {
         logger.info("Datos recibidos en el backend para Apify-Call:");
@@ -40,7 +40,7 @@ public class ApifyController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUP','PA')")
     @PostMapping(value = "/excel/read-tiktok-accounts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> readTiktokAccounts(@RequestParam("file") MultipartFile file) {
         String sheetName = "tiktok_metricas";

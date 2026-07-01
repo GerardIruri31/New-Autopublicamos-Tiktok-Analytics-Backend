@@ -115,8 +115,7 @@ public class DataMaintenanceRepository {
               fecreacionregistro date,
               horacreacionregistro time,
               fecactualizacionregistro date,
-              horaactualizacionregistro time,
-              CONSTRAINT %s PRIMARY KEY (codescenasinversion, numversion, tipimagenvideo)%s
+              horaactualizacionregistro time
             );
             """, finalTableName, pkName, fkSql);
                 break;
@@ -135,8 +134,7 @@ public class DataMaintenanceRepository {
               fecreacionregistro date,
               horacreacionregistro time,
               fecactualizacionregistro date,
-              horaactualizacionregistro time,
-              CONSTRAINT %s PRIMARY KEY (codlibro, tippublicacion, tipimagenvideo,urlimagenvideo)%s
+              horaactualizacionregistro time
             );
             """, finalTableName, pkName, fkSql);
                 break;
@@ -173,14 +171,7 @@ public class DataMaintenanceRepository {
               fecreacionregistro, horacreacionregistro,
               fecactualizacionregistro, horaactualizacionregistro
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME)
-            ON CONFLICT (codescenasinversion, numversion, tipimagenvideo)
-            DO UPDATE SET
-              urlimagenvideo = EXCLUDED.urlimagenvideo,
-              flvigente = EXCLUDED.flvigente,
-              codusuarioauditoria = EXCLUDED.codusuarioauditoria,
-              fecactualizacionregistro = CURRENT_DATE,
-              horaactualizacionregistro = LOCALTIME;
+            VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME);
             """, finalTableName);
                 break;
 
@@ -193,9 +184,7 @@ public class DataMaintenanceRepository {
               fecreacionregistro, horacreacionregistro,
               fecactualizacionregistro, horaactualizacionregistro
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME)
-            ON CONFLICT (codlibro, tippublicacion, tipimagenvideo,urlimagenvideo)
-            DO NOTHING;
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME);
             """, finalTableName);
                 break;
             case "m_librotelefonocuenta" :
@@ -207,7 +196,6 @@ public class DataMaintenanceRepository {
               fecactualizacionregistro, horaactualizacionregistro
             )
             VALUES (?, ?, ?, ?, ?, CURRENT_DATE, LOCALTIME, CURRENT_DATE, LOCALTIME);
-            
             """, finalTableName);
                 break;
             default:

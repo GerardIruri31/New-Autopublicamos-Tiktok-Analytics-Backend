@@ -29,7 +29,7 @@ public class ExcelDataMaintenanceController {
     private final ExcelUploadService excelUploadService;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUP','PA')")
     @GetMapping("/download")
     public ResponseEntity<byte[]> downloadExcel(@RequestParam("TableName") String tableName) {
         List<Map<String, Object>> data = dataMaintenanceService.showDBRecords(tableName);
@@ -47,7 +47,7 @@ public class ExcelDataMaintenanceController {
 
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUP','PA')")
     @PostMapping("/uploadexcel")
     public ResponseEntity<Map<String, Object>> uploadExcelFile(@RequestParam("file") MultipartFile file, @RequestParam("userId") String userId) {
         logger.info("Excel recibido correctamente en el backend en ImportExcel Datamaintenance");

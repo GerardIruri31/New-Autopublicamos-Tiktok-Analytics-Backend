@@ -6,4 +6,5 @@ import lombok.Data;
 public class SceneResponseDTO {
     private String codescena;
     private String desscena;
+    private String codescenaraiz;
 }

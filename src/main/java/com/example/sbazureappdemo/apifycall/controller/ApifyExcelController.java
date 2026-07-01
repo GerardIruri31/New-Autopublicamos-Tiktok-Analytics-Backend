@@ -19,7 +19,7 @@ public class ApifyExcelController {
     Logger logger = LoggerFactory.getLogger(ApifyExcelController.class);
     private final ApifyDownloadExcelService apifyDownloadExcelService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUP','PA')")
     @PostMapping("/download")
     public ResponseEntity<byte[]> downloadExcel(@RequestBody DownloadExcelFiltersRequest request) {
         logger.info("AccountList: " + request.getAccountList());

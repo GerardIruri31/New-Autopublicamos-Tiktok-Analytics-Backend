@@ -56,12 +56,7 @@ public class SecurityConfig {
                         // ✅ preflight CORS
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers(
-                                "/apifycall/filtrar",
-                                "/apifycall/excel/download",
-                                "/apifycall/excel/read-tiktok-accounts"
-                        ).hasRole("ADMIN")
-                        .requestMatchers("/orden/filter/**","/order/queries/**","/order/auto","/order/edit","/order/manual","/order/delete","/databasequery/filter","/pagraphs/getdata","/datamaintenance/uploadexcel","/datamaintenance/tablerecords","/datamaintenance/download").hasAnyRole("SUP", "ADMIN","PA")
+                        .requestMatchers("/orden/filter/**","/order/queries/**","/order/auto","/order/edit","/order/manual","/order/delete","/databasequery/filter","/pagraphs/getdata","/datamaintenance/uploadexcel","/datamaintenance/tablerecords","/datamaintenance/download","/apifycall/filtrar", "/apifycall/excel/download", "/apifycall/excel/read-tiktok-accounts").hasAnyRole("SUP", "ADMIN","PA")
                         .anyRequest().hasAnyRole("PA", "SUP", "ADMIN","AUT")
                 )
                 .oauth2ResourceServer(oauth -> oauth

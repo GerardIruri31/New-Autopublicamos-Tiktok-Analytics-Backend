@@ -185,7 +185,7 @@ public class OrdenGenerationRepository {
 
     public List<SceneResponseDTO> selectScene(SceneRequestDTO requestDTO) {
         String sql = """
-            SELECT e.codescena, e.desscena
+            SELECT e.codescena, e.desscena, e.codescenaraiz
             from m_escenalibro e\s
             where e.codlibro = ?
             AND e.tippublicacion = ?     
@@ -194,6 +194,7 @@ public class OrdenGenerationRepository {
             SceneResponseDTO dto = new SceneResponseDTO();
             dto.setCodescena(rs.getString("codescena"));
             dto.setDesscena(rs.getString("desscena"));
+            dto.setCodescenaraiz(rs.getString("codescenaraiz"));
             return dto;
         });
     }

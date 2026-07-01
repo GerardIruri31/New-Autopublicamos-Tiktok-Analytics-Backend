@@ -20,7 +20,7 @@ public class DataMaintenanceController {
     Logger logger = LoggerFactory.getLogger(DataMaintenanceController.class);
     private final DataMaintenanceService dataMaintenanceService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUP','PA')")
     @PostMapping("/tablerecords")
     public List<Map<String, Object>> RenderizeDBRecords(@RequestBody Map<String,Object> TableName) {
         logger.info("Iniciando obtención datos para showRecords: tabla " + TableName);

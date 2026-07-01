@@ -132,9 +132,8 @@
                     <from>
                         <image>eclipse-temurin:17-jre</image>
                     </from>
-
                     <to>
-                        <image>docker.io/admautopub/backendjava:new_autopub_v2.7</image>
+                        <image>docker.io/admautopub/backendjava:new_autopub_v2.10</image>
                         <auth>
                             <username>admautopub</username>
                             <password>J1h0d1g224+</password>
