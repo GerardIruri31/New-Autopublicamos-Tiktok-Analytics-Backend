@@ -36,8 +36,8 @@ public class ordenGenerationFiltersController {
     }
 
     @PreAuthorize("hasAnyRole('SUP','ADMIN','PA')")
-    @GetMapping("/author")
-    public ResponseEntity<List<AuthorResponseDTO>> selectAuthor(@ModelAttribute AuthorRequestDTO requestDTO) {
+    @PostMapping("/author")
+    public ResponseEntity<List<AuthorResponseDTO>> selectAuthor(@RequestBody AuthorRequestDTO requestDTO) {
         logger.info("Iniciando obtención datos Author disponibles ... ");
         return ResponseEntity.ok(ordenGenerationService.selectAuthor(requestDTO));
     }
@@ -71,6 +71,14 @@ public class ordenGenerationFiltersController {
     public ResponseEntity<List<ImagesVideosPerTipPublicacionDTO>> requiredImagesPerTipPublicacion() {
         logger.info("Iniciando validación tipos imagen-videos por tippublicacion ... ");
         return ResponseEntity.ok(ordenGenerationService.requiredImagesPerTipPublicacion());
+    }
+
+
+    @PreAuthorize("hasAnyRole('SUP','ADMIN','PA')")
+    @GetMapping("/accounts")
+    public ResponseEntity<List<AccountResponseDTO>> selectAccounts(@RequestParam String tiptelefono, @RequestParam String codtelefono) {
+        logger.info("Iniciando select de accounts ... ");
+        return ResponseEntity.ok(ordenGenerationService.selectAccounts(tiptelefono,codtelefono));
     }
 
 

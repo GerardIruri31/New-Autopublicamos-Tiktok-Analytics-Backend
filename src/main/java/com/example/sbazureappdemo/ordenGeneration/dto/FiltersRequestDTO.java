@@ -2,6 +2,7 @@ package com.example.sbazureappdemo.ordenGeneration.dto;
 
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class FiltersRequestDTO {
@@ -12,6 +13,7 @@ public class FiltersRequestDTO {
     private String tiptelefono;
 
     private String codtelefono;
+    private List<String> codcuentatiktok;
     private String codautora;
     private String codlibro;
     private String tippublicacion;

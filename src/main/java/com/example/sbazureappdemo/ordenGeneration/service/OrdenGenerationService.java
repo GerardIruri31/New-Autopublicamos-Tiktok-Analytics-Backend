@@ -36,6 +36,11 @@ public class OrdenGenerationService {
         boolean tieneTelefono = codtelefono != null && !codtelefono.isBlank();
         boolean esTelefonoSoporte = tiptelefono != null && (tiptelefono.equalsIgnoreCase("SOP") || tiptelefono.equalsIgnoreCase("SOP2"));
 
+
+        if (!requestDTO.getCodcuentatiktok().isEmpty()) {
+            return ordenGenerationRepository.selectAuthorByAccountAndNormalPhone(requestDTO.getCodcuentatiktok(),codtelefono, codposteador);
+        }
+
         if (tieneTelefono && esTelefonoSoporte) {
             return ordenGenerationRepository.selectAuthorBySupportPhone(codtelefono);
         }
@@ -343,5 +348,18 @@ public class OrdenGenerationService {
         if (dto.getCoderror() != null || dto.getDeserror() != null) {
             throw new DataRetrievalFailureException("Error al liberar recursos de la orden: " + requestDTO.getCodordentrabajo() + " | coderror: " + dto.getCoderror() + " | deserror: " + dto.getDeserror());
         }
+    }
+
+
+    public List<AccountResponseDTO> selectAccounts(String tiptelefono, String codtelefono) {
+        if ("SOP".equalsIgnoreCase(tiptelefono) || "SOP2".equalsIgnoreCase(tiptelefono)) {
+            logger.info("Se eligió telefono SOP/SOP2 -> devolver lista vacía");
+            return List.of();
+        }
+        List<AccountResponseDTO> dto = ordenGenerationRepository.selectAccounts(codtelefono);
+        if (dto.isEmpty()) {
+            throw new DataRetrievalFailureException("No hay cuentas relacionadas al telefono: " + codtelefono);
+        }
+        return dto;
     }
 }

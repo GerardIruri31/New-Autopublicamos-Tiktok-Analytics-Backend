@@ -15,6 +15,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @AllArgsConstructor
@@ -167,6 +168,52 @@ public class OrdenGenerationRepository {
         });
     }
 
+    public List<AuthorResponseDTO> selectAuthorByAccountAndNormalPhone(List<String> codcuentatiktok, String codtelefono, String codposteador) {
+        String accountPlaceholders = String.join(
+                ", ",
+                java.util.Collections.nCopies(codcuentatiktok.size(), "?")
+        );
+
+        String sql = """
+            SELECT DISTINCT
+                l.codlibro,
+                l.deslibro,
+                l.codautora,
+                INITCAP(COALESCE(a.nbautora, 'NoName') || ' ' || COALESCE(a.apeautora, 'NoFirstName')) AS nbrautora
+            FROM m_posteadortelefono pt
+            JOIN m_librotelefonocuenta ltc
+                ON ltc.codtelefono = pt.codtelefono
+            JOIN m_libro l\s
+                ON l.codlibro = ltc.codlibro\s
+            JOIN m_autora a
+                ON a.codautora = l.codautora
+            WHERE ltc.codtelefono = ?
+            AND pt.codposteador = ?
+            AND ltc.codcuenta IN (%s)
+              AND ltc.flvigente = 'S'
+              AND l.flvigente = 'S'
+              AND a.flvigente = 'S'
+              AND pt.flvigente = 'S'
+            order by nbrautora
+        """.formatted(accountPlaceholders);
+
+        List<Object> params = new ArrayList<>();
+        params.add(codtelefono);
+        params.add(codposteador);
+        params.addAll(codcuentatiktok);
+
+        return jdbc.query(sql, (rs, rowNum) -> {
+            AuthorResponseDTO dto = new AuthorResponseDTO();
+            dto.setCodlibro(rs.getString("codlibro"));
+            dto.setDeslibro(rs.getString("deslibro"));
+            dto.setCodautora(rs.getString("codautora"));
+            dto.setNbrautora(rs.getString("nbrautora"));
+            return dto;
+        }, params.toArray());
+    }
+
+
+
     public List<PostTypeResponseDTO> selectPostType(String codlibro) {
         String sql = """
             SELECT DISTINCT e.tippublicacion, t.despost
@@ -272,10 +319,29 @@ public class OrdenGenerationRepository {
         });
     }
 
+
+    public List<AccountResponseDTO> selectAccounts(String codtelefono) {
+        String sql = """
+                SELECT DISTINCT codcuenta 
+                FROM m_librotelefonocuenta 
+                where codtelefono = ?
+                order by codcuenta
+                """;
+        return jdbc.query(sql, (rs, rowNum) -> {
+            AccountResponseDTO dto = new AccountResponseDTO();
+            dto.setCodcuentatiktok(rs.getString("codcuenta"));
+            return dto;
+        },codtelefono);
+    }
+
     public AutoGenerationResponseDTO  autoGeneration(FiltersRequestDTO requestDTO) {
         return jdbc.execute((java.sql.Connection con) -> {
-            String sql = "{ call public.sp_orquestar_generacion_ordenes_automaticas(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?) }";
-
+            String sql = """
+            { call public.sp_orquestar_generacion_ordenes_automaticas(
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            ) }
+            """;
             try (CallableStatement cs = con.prepareCall(sql)) {
 
                 // 1. p_correo
@@ -290,83 +356,102 @@ public class OrdenGenerationRepository {
                 // 4. p_codtelefono
                 cs.setString(4, requestDTO.getCodtelefono());
 
-                // 5. p_codautora
-                cs.setString(5, requestDTO.getCodautora());
+                // 5. p_lst_codcuenta
+                List<String> cuentas = requestDTO.getCodcuentatiktok();
 
-                // 6. p_codlibro
-                cs.setString(6, requestDTO.getCodlibro());
-
-                // 7. p_tippublicacion
-                cs.setString(7, requestDTO.getTippublicacion());
-
-                // 8. p_codescena
-                cs.setString(8, requestDTO.getCodescena());
-
-                // 9. p_flgprioridadescena
-                cs.setString(9, requestDTO.getFlgprioridadescena());
-
-                // 10. p_flgprioridadsonido
-                cs.setString(10, requestDTO.getFlgprioridasonido());
-
-                // 11. p_flgprioridadimagenvideo
-                cs.setString(11, requestDTO.getFlgprioridadimagenvideo());
-
-                // 12. p_fecinicioplanposteo
-                if (requestDTO.getFecinicioplanposteo() != null) {
-                    cs.setDate(12, java.sql.Date.valueOf(requestDTO.getFecinicioplanposteo()));
+                if (cuentas == null || cuentas.isEmpty()) {
+                    cs.setNull(5, Types.ARRAY);
                 } else {
-                    cs.setNull(12, Types.DATE);
+                    String[] cuentasArray = cuentas.stream()
+                            .filter(Objects::nonNull)
+                            .map(String::trim)
+                            .filter(cuenta -> !cuenta.isEmpty())
+                            .toArray(String[]::new);
+                    if (cuentasArray.length == 0) {
+                        cs.setNull(5, Types.ARRAY);
+                    } else {
+                        java.sql.Array sqlArray = con.createArrayOf("varchar", cuentasArray);
+                        cs.setArray(5, sqlArray);
+                    }
                 }
 
-                // 13. p_fecfinplanposteo
-                if (requestDTO.getFecfinplanposteo() != null) {
-                    cs.setDate(13, java.sql.Date.valueOf(requestDTO.getFecfinplanposteo()));
+                // 6. p_codautora
+                cs.setString(6, requestDTO.getCodautora());
+
+                // 7. p_codlibro
+                cs.setString(7, requestDTO.getCodlibro());
+
+                // 8. p_tippublicacion
+                cs.setString(8, requestDTO.getTippublicacion());
+
+                // 9. p_codescena
+                cs.setString(9, requestDTO.getCodescena());
+
+                // 10. p_flgprioridadescena
+                cs.setString(10, requestDTO.getFlgprioridadescena());
+
+                // 11. p_flgprioridadsonido
+                cs.setString(11, requestDTO.getFlgprioridasonido());
+
+                // 12. p_flgprioridadimagenvideo
+                cs.setString(12, requestDTO.getFlgprioridadimagenvideo());
+
+                // 13. p_fecinicioplanposteo
+                if (requestDTO.getFecinicioplanposteo() != null) {
+                    cs.setDate(13, java.sql.Date.valueOf(requestDTO.getFecinicioplanposteo()));
                 } else {
                     cs.setNull(13, Types.DATE);
                 }
 
-                // 14. p_ctdordenesmetamanual
-                if (requestDTO.getCtdordenesmetamanual() != null) {
-                    cs.setInt(14, requestDTO.getCtdordenesmetamanual());
+                // 14. p_fecfinplanposteo
+                if (requestDTO.getFecfinplanposteo() != null) {
+                    cs.setDate(14, java.sql.Date.valueOf(requestDTO.getFecfinplanposteo()));
                 } else {
-                    cs.setNull(14, Types.INTEGER);
+                    cs.setNull(14, Types.DATE);
                 }
 
-                // 15. p_codcabeceraordentrabajo
-                cs.setNull(15, Types.BIGINT);
-                cs.registerOutParameter(15, Types.BIGINT);
+                // 15. p_ctdordenesmetamanual
+                if (requestDTO.getCtdordenesmetamanual() != null) {
+                    cs.setInt(15, requestDTO.getCtdordenesmetamanual());
+                } else {
+                    cs.setNull(15, Types.INTEGER);
+                }
 
-                // 16. p_var_ctdordenes
-                cs.setInt(16, 0);
-                cs.registerOutParameter(16, Types.INTEGER);
+                // 16. p_codcabeceraordentrabajo
+                cs.setNull(16, Types.BIGINT);
+                cs.registerOutParameter(16, Types.BIGINT);
 
-                // 17. p_var_ctdordenescompleta
+                // 17. p_var_ctdordenes
                 cs.setInt(17, 0);
                 cs.registerOutParameter(17, Types.INTEGER);
 
-                // 18. p_var_ctdordenesincompleta
+                // 18. p_var_ctdordenescompleta
                 cs.setInt(18, 0);
                 cs.registerOutParameter(18, Types.INTEGER);
 
-                // 19. p_msj_error_log
-                cs.setNull(19, Types.VARCHAR);
-                cs.registerOutParameter(19, Types.VARCHAR);
+                // 19. p_var_ctdordenesincompleta
+                cs.setInt(19, 0);
+                cs.registerOutParameter(19, Types.INTEGER);
+
+                // 20. p_msj_error_log
+                cs.setNull(20, Types.VARCHAR);
+                cs.registerOutParameter(20, Types.VARCHAR);
 
                 cs.execute();
 
-                long codCabeceraValue = cs.getLong(15);
+                long codCabeceraValue = cs.getLong(16);
                 Long codCabecera = cs.wasNull() ? null : codCabeceraValue;
 
-                int ctdOrdenesValue = cs.getInt(16);
+                int ctdOrdenesValue = cs.getInt(17);
                 Integer ctdOrdenes = cs.wasNull() ? null : ctdOrdenesValue;
 
-                int ctdOrdenesCompletaValue = cs.getInt(17);
+                int ctdOrdenesCompletaValue = cs.getInt(18);
                 Integer ctdOrdenesCompleta = cs.wasNull() ? null : ctdOrdenesCompletaValue;
 
-                int ctdOrdenesIncompletaValue = cs.getInt(18);
+                int ctdOrdenesIncompletaValue = cs.getInt(19);
                 Integer ctdOrdenesIncompleta = cs.wasNull() ? null : ctdOrdenesIncompletaValue;
 
-                String msj_error_logValue = cs.getString(19);
+                String msj_error_logValue = cs.getString(20);
                 String msj_error_log = cs.wasNull() ? null : msj_error_logValue;
 
                 /*logger.info("codcabecera: {}", codCabecera);
@@ -564,4 +649,6 @@ public class OrdenGenerationRepository {
             return dto;
         }, requestDTO.getCorreo(), requestDTO.getCodordentrabajo(), requestDTO.getCodescena(), requestDTO.getTippublicacion(), requestDTO.getCodlibro(), requestDTO.getCodcuentatiktok(), requestDTO.getCodtelefono() ,requestDTO.getCodimagenprincipal(),  requestDTO.getCodimagenscreenshot(),  requestDTO.getCodimagendialogo(), requestDTO.getCodvideo(), requestDTO.getCodsonido());
     }
+
+
 }
